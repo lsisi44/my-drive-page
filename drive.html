@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科目一 · 限时挑战30分</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #f0f4fa;
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            width: 100%;
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        /* 左侧刷题主区 */
+        .exam-area {
+            flex: 2;
+            min-width: 620px;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 20px 40px -8px rgba(18, 45, 74, 0.15);
+            padding: 30px 35px;
+            transition: all 0.2s;
+        }
+
+        /* 右侧面板：计时/成绩趋势/鼓励 */
+        .side-panel {
+            flex: 1;
+            min-width: 280px;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 20px 40px -8px rgba(18, 45, 74, 0.15);
+            padding: 28px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .timer-card {
+            background: #1b2f4f;
+            border-radius: 28px;
+            padding: 22px 18px;
+            color: white;
+            text-align: center;
+            box-shadow: inset 0 -4px 0 #0f1e30;
+        }
+
+        .timer-label {
+            font-size: 1rem;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
+        .timer-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3.6rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #ffe484;
+            text-shadow: 0 4px 0 #b57c1c;
+        }
+
+        .progress-mini {
+            margin-top: 10px;
+            font-size: 1rem;
+            background: #254a79;
+            padding: 8px 16px;
+            border-radius: 40px;
+        }
+
+        .submit-btn {
+            background: #2b825b;
+            color: white;
+            border: none;
+            padding: 18px 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-radius: 48px;
+            width: 100%;
+            margin: 15px 0 10px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #12442f;
+            transition: 0.08s linear;
+        }
+
+        .submit-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 3px 0 #12442f;
+        }
+
+        .submit-btn:disabled {
+            background: #a8b9c7;
+            box-shadow: 0 8px 0 #6a7a8a;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .score-board {
+            background: #eef3fb;
+            border-radius: 28px;
+            padding: 22px 18px;
+            text-align: center;
+            border: 1px solid #cdddec;
+        }
+
+        .score-number {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #1e3f68;
+        }
+
+        .encourage-text {
+            font-size: 1.25rem;
+            background: #fff3cf;
+            padding: 18px 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #2d4c2d;
+            border-left: 6px solid #ffb347;
+            text-align: center;
+        }
+
+        .gold-cup {
+            font-size: 5rem;
+            filter: drop-shadow(0 8px 12px #e8b42c);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .chart-container {
+            background: #f7faff;
+            border-radius: 24px;
+            padding: 16px 6px 6px 6px;
+            border: 1px solid #cbd6ed;
+        }
+
+        .history-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #142b44;
+        }
+
+        /* 题目卡片 */
+        .question-item {
+            border-bottom: 1px solid #e2eaf5;
+            padding: 22px 0 18px;
+        }
+
+        .q-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .q-num {
+            background: #1d3a5c;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-left: 40px;
+            margin-bottom: 15px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            padding: 4px 0;
+        }
+
+        .option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #1d5c8b;
+            cursor: pointer;
+        }
+
+        .explain-box {
+            background: #f1f7fe;
+            border-radius: 24px;
+            padding: 18px 22px;
+            margin: 12px 0 4px 40px;
+            border-left: 6px solid #4870a2;
+            font-size: 0.98rem;
+            color: #033b6e;
+        }
+
+        .explain-correct {
+            background: #e2f2da;
+            border-left-color: #2e7d32;
+        }
+
+        .explain-wrong {
+            background: #ffe9e9;
+            border-left-color: #ba2d2d;
+        }
+
+        .legend-box {
+            display: flex;
+            gap: 30px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            margin-right: 6px;
+        }
+
+        .footer-note {
+            color: #5f6f88;
+            font-size: 0.9rem;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        /* 错题摘要 */
+        .wrong-list {
+            background: #faf1f1;
+            border-radius: 24px;
+            padding: 18px;
+            margin-top: 18px;
+        }
+        .wrong-item {
+            border-bottom: 1px dashed #cf9f9f;
+            padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <!-- 左侧刷题核心区 -->
+    <div class="exam-area" id="examArea">
+        <h2 style="margin-bottom: 6px; color: #002856;">📋 科目一 · 30分钟闯关</h2>
+        <p style="color: #42648d; margin-bottom: 6px;">满分100分 · 共40题 · 每题2.5分</p>
+        <div class="legend-box">
+            <span><span class="dot" style="background:#cfe3ff;"></span> 未答</span>
+            <span><span class="dot" style="background:#b7e3b0;"></span> 正确</span>
+            <span><span class="dot" style="background:#fbc2c2;"></span> 错误</span>
+        </div>
+        <div id="questionsContainer"></div>
+        <div style="text-align: center; margin: 30px 0 20px;">
+            <button class="submit-btn" id="submitPaper">✅ 提交答卷 · 查看得分</button>
+        </div>
+        <div id="resultArea" style="margin-top: 20px;"></div>
+        <div class="footer-note">* 每道题都有解析，提交后显示错题</div>
+    </div>
+
+    <!-- 右侧面板 -->
+    <div class="side-panel">
+        <div class="timer-card">
+            <div class="timer-label">⏳ 剩余时间</div>
+            <div class="timer-display" id="timerDisplay">30:00</div>
+            <div class="progress-mini" id="answeredCount">已答 0 / 40 题</div>
+        </div>
+
+        <div class="score-board" id="scoreBoard">
+            <div style="font-size: 1rem; color:#1e3f68;">当前最新得分</div>
+            <div class="score-number" id="latestScore">--</div>
+            <div id="cupArea"></div>
+        </div>
+
+        <div class="encourage-text" id="encourageMessage">
+            ✨ 欢迎挑战！完成试卷看看你的实力
+        </div>
+
+        <!-- 成绩曲线图 (简易历史趋势) -->
+        <div class="chart-container">
+            <div class="history-title">📈 近5次成绩曲线</div>
+            <canvas id="scoreChart" width="250" height="120" style="width:100%; height:auto; background:#fafcff; border-radius: 18px;"></canvas>
+            <div style="display: flex; justify-content: space-between; font-size:0.8rem; padding:0 6px; color:#2f4f7a;">
+                <span>最近</span><span>→</span><span>最早</span>
+            </div>
+        </div>
+
+        <!-- 成绩历史存档 (隐藏存储) -->
+        <div style="font-size:0.9rem; color:#1e4174; text-align:center; padding:8px;">
+            ⭐ 满分即可获得金色奖杯
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    (function() {
+        // ---------- 题库 (源自之前整理的40题，带正确答案和解析) ----------
+        const questions = [
+            { q: "驾驶机动车在高速公路上倒车、掉头、逆行的，一次记多少分？", options: ["A. 3分", "B. 6分", "C. 9分", "D. 12分"], answer: "D", explain: "高速公路倒车、掉头、逆行一次记12分。"},
+            { q: "关于酒驾，下列哪项说法是正确的？", options: ["A. 饮酒后驾驶机动车，暂扣6个月驾照，并处1000元以上2000元以下罚款", "B. 醉酒驾驶机动车的，吊销驾照，5年内不得重新申领，并依法追究刑事责任", "C. 因饮酒后驾驶机动车被处罚，再次饮酒后驾驶机动车的，处10日以下拘留+罚款+吊销驾照", "D. 以上都对"], answer: "D", explain: "酒驾、醉驾、再次酒驾的处罚均正确。"},
+            { q: "驾驶人造成交通事故后逃逸，尚不构成犯罪的，一次记多少分？", options: ["A. 6分", "B. 9分", "C. 12分", "D. 3分"], answer: "C", explain: "造成事故后逃逸，尚不构成犯罪，记12分。"},
+            { q: "关于超速，以下哪种说法符合新规？", options: ["A. 高速公路上超速50%以上记12分", "B. 普通公路超速50%以上记6分", "C. 高速超速20%以上未达50%记6分", "D. 以上都是"], answer: "D", explain: "超速50%以上高速12分、普通6分；高速超速20%~50%记6分。"},
+            { q: "使用伪造、变造的机动车号牌、行驶证、驾驶证的一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "A", explain: "伪造、变造号牌/证件一次记12分。"},
+            { q: "驾驶机动车不按交通信号灯指示通行（闯红灯）的，一次记多少分？", options: ["A. 12分", "B. 6分", "C. 3分", "D. 1分"], answer: "B", explain: "闯红灯记6分。"},
+            { q: "驾驶与准驾车型不符的机动车，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "B", explain: "驾驶与准驾车型不符记9分。"},
+            { q: "关于超员，根据车辆类型，下列哪项是正确的？", options: ["A. 7座以上超员100%以上记12分", "B. 7座以下超员100%以上记12分", "C. 7座以上超员100%以上记12分，7座以下超员100%以上记6分", "D. 以上都不对"], answer: "C", explain: "7座以上超员100%以上12分，7座以下超员100%以上6分。"},
+            { q: "未取得校车驾驶资格驾驶校车的，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "B", explain: "未取得校车资格驾驶校车记9分。"},
+            { q: "驾驶机动车在高速公路上违法占用应急车道行驶的，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "C", explain: "占用应急车道行驶记6分。"},
+            { q: "关于超载（货车超限），常见处罚？", options: ["A. 超载30%以下记1分", "B. 超载30%~50%记3分", "C. 超载50%以上记6分", "D. 以上都常见，导图归纳为货车超限"], answer: "D", explain: "货车超限根据程度不同记1-6分，导图概括为‘货车超限’。"},
+            { q: "驾驶机动车在高速公路上行驶，超过规定时速20%以上未达50%的，一次记多少分？", options: ["A. 12分", "B. 6分", "C. 3分", "D. 1分"], answer: "B", explain: "高速超速20%~50%记6分。"},
+            { q: "以下哪种违法行为一次记3分？", options: ["A. 高速不按规定车道行驶", "B. 不按规定避让校车", "C. 接打手持电话", "D. 以上都是"], answer: "D", explain: "A、B、C三项均记3分。"},
+            { q: "关于逃逸，下列说法正确的是？", options: ["A. 轻伤以上逃逸(未犯罪)记12分", "B. 轻微伤或财产损失逃逸记6分", "C. 轻微伤逃逸记6分", "D. 以上都对"], answer: "D", explain: "轻微伤逃逸记6分，伤亡逃逸记12分。"},
+            { q: "故意遮挡、污损机动车号牌的，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "B", explain: "故意遮挡/污损号牌记9分。"},
+            { q: "未悬挂机动车号牌或者不按规定安装号牌的，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "B", explain: "未悬挂/不按规定安装号牌记9分。"},
+            { q: "驾驶机动车在普通公路上逆行，一次记多少分？", options: ["A. 12分", "B. 6分", "C. 3分", "D. 1分"], answer: "C", explain: "普通公路逆行记3分。"},
+            { q: "驾驶机动车违反禁令标志、禁止标线指示的，一次记多少分？", options: ["A. 1分", "B. 2分", "C. 3分", "D. 6分"], answer: "A", explain: "违反禁令标志/标线记1分。"},
+            { q: "关于实习期的规定，以下哪项正确？", options: ["A. 实习期上高速需3年以上驾龄陪同", "B. 未贴实习标可罚款", "C. 实习期独自上高速违规", "D. 以上均合理"], answer: "D", explain: "实习期规定A、B、C均合理。"},
+            { q: "驾驶机动车未按规定系安全带的，一次记多少分？", options: ["A. 1分", "B. 3分", "C. 6分", "D. 12分"], answer: "A", explain: "不系安全带记1分。"},
+            { q: "驾驶机动车在高速公路上行驶低于规定最低时速的，一次记多少分？", options: ["A. 6分", "B. 3分", "C. 2分", "D. 1分"], answer: "B", explain: "高速低于最低时速记3分。"},
+            { q: "遇排队借道超车/穿插等候车辆，一次记多少分？", options: ["A. 6分", "B. 3分", "C. 2分", "D. 1分"], answer: "B", explain: "穿插等候车辆记3分。"},
+            { q: "代替他人接受处罚并牟利（消分）的，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "A", explain: "消分牟利记12分。"},
+            { q: "高速公路上违法停车的，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "B", explain: "高速公路违停记9分。"},
+            { q: "驾驶机动车载货长度、宽度、高度超过规定的，一次记多少分？", options: ["A. 1分", "B. 3分", "C. 6分", "D. 12分"], answer: "A", explain: "超限长宽高记1分。"},
+            { q: "未放置保险标志、检验合格标志的，一次记多少分？", options: ["A. 1分", "B. 3分", "C. 6分", "D. 不扣分"], answer: "A", explain: "未放置相关标志记1分。"},
+            { q: "连续驾驶超过4小时未休息(普通车)一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "D", explain: "疲劳驾驶(普通车)记3分。"},
+            { q: "行经人行横道不按规定减速、避让行人的，一次记多少分？", options: ["A. 1分", "B. 2分", "C. 3分", "D. 6分"], answer: "C", explain: "不礼让行人记3分。"},
+            { q: "不按规定会车，或者在普通公路不按规定掉头、倒车的，一次记多少分？", options: ["A. 1分", "B. 2分", "C. 3分", "D. 6分"], answer: "A", explain: "不按规定会车/掉头倒车记1分。"},
+            { q: "造成轻微伤或财产损失逃逸，尚不构成犯罪的，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "C", explain: "轻微伤/财产损失逃逸记6分。"},
+            { q: "不按规定使用灯光的，一次记多少分？", options: ["A. 1分", "B. 2分", "C. 3分", "D. 6分"], answer: "A", explain: "不按规定使用灯光记1分。"},
+            { q: "高速故障停车不按规定使用警示灯/警告标志的，一次记多少分？", options: ["A. 6分", "B. 3分", "C. 2分", "D. 1分"], answer: "B", explain: "故障停车未设警告标志记3分。"},
+            { q: "考试过程中贿赂、舞弊，多久不得申领？", options: ["A. 1年", "B. 2年", "C. 3年", "D. 5年"], answer: "A", explain: "考试舞弊取消资格，一年内不得申领。"},
+            { q: "驾驶报废机动车上路行驶的，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "A", explain: "报废车上路记12分。"},
+            { q: "驾驶拼装机动车上路行驶的，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "A", explain: "拼装车上路记12分。"},
+            { q: "普通公路超速20%-50%的，一次记多少分？", options: ["A. 12分", "B. 6分", "C. 3分", "D. 1分"], answer: "C", explain: "普通公路超速20%-50%记3分。"},
+            { q: "驾驶证被暂扣期间驾驶机动车的，一次记多少分？", options: ["A. 12分", "B. 9分", "C. 6分", "D. 3分"], answer: "C", explain: "暂扣期间驾车记6分。"},
+            { q: "非法安装警报器或者标志灯具的，一次记多少分？", options: ["A. 12分", "B. 6分", "C. 3分", "D. 1分"], answer: "B", explain: "非法安装警报器记6分。"},
+            { q: "高速不按规定保持行车间距，一次记多少分？", options: ["A. 1分", "B. 2分", "C. 3分", "D. 6分"], answer: "B", explain: "不按规定保持安全距离记2分。"},
+            { q: "关于超速，哪项描述正确？", options: ["A. 普通公路超速50%以上记6分", "B. 高速公路超速50%以上记12分", "C. 普通公路超速20%-50%记3分", "D. 以上都对"], answer: "D", explain: "A、B、C均正确。满分40题，但此处为40。"}
+        ];
+
+        // 保证40题 (上面列表正好40题, 索引0~39)
+        const TOTAL = questions.length;
+        const SCORE_PER = 100 / TOTAL;  // 2.5
+
+        let userAnswers = new Array(TOTAL).fill(null);        // 存储所选选项索引 (0~3) 或 null
+        let examEnded = false;          // 是否已提交/时间结束
+        let timerInterval = null;
+        let timeLeft = 1800; // 30分钟 = 1800秒
+        let scoreHistory = [];           // 存储历史分数 (每次提交追加)
+
+        // DOM 元素
+        const timerDisplay = document.getElementById('timerDisplay');
+        const answeredSpan = document.getElementById('answeredCount');
+        const submitBtn = document.getElementById('submitPaper');
+        const resultArea = document.getElementById('resultArea');
+        const latestScoreSpan = document.getElementById('latestScore');
+        const encourageEl = document.getElementById('encourageMessage');
+        const cupArea = document.getElementById('cupArea');
+
+        // 渲染题目
+        const container = document.getElementById('questionsContainer');
+        function renderQuestions() {
+            let html = '';
+            questions.forEach((q, idx) => {
+                const selected = userAnswers[idx];
+                html += `<div class="question-item" id="q-${idx}">`;
+                html += `<div class="q-title"><span class="q-num">${idx+1}</span> ${q.q}</div>`;
+                html += `<div class="options" id="opt-${idx}">`;
+                q.options.forEach((opt, optIdx) => {
+                    const checked = (selected === optIdx) ? 'checked' : '';
+                    html += `<label class="option">
+                        <input type="radio" name="q${idx}" value="${optIdx}" ${checked} data-qidx="${idx}" data-oidx="${optIdx}"> 
+                        <span>${opt}</span>
+                    </label>`;
+                });
+                html += `</div>`;
+                // 如果已提交并显示解析区域, 但我们会统一在提交后生成结果区域，此处不重复
+                html += `</div>`;
+            });
+            container.innerHTML = html;
+
+            // 绑定radio事件
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', function(e) {
+                    if (examEnded) {
+                        alert('考试已结束，无法修改答案');
+                        this.checked = false;
+                        return;
+                    }
+                    const qIdx = parseInt(this.dataset.qidx);
+                    const oIdx = parseInt(this.dataset.oidx);
+                    userAnswers[qIdx] = oIdx;
+                    updateAnsweredCount();
+                });
+            });
+        }
+
+        // 更新已答题数
+        function updateAnsweredCount() {
+            const count = userAnswers.filter(a => a !== null).length;
+            answeredSpan.innerText = `已答 ${count} / ${TOTAL} 题`;
+        }
+
+        // 计时器
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    timeLeft = 0;
+                    updateTimerDisplay();
+                    endExamDueToTime();
+                    return;
+                }
+                timeLeft--;
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerDisplay.textContent = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        }
+
+        function endExamDueToTime() {
+            if (examEnded) return;
+            clearInterval(timerInterval);
+            examEnded = true;
+            submitBtn.disabled = true;
+            alert('⏰ 倒计时结束，将自动提交当前答卷');
+            calculateAndShowResult(true); // 强制提交
+        }
+
+        // 评分 & 展示错题&解析
+        function calculateAndShowResult(isAuto = false) {
+            if (examEnded && !isAuto) return; // 防止重复
+
+            clearInterval(timerInterval);
+            examEnded = true;
+            submitBtn.disabled = true;
+
+            // 计算得分
+            let correctCount = 0;
+            questions.forEach((q, idx) => {
+                const ansIdx = userAnswers[idx];
+                if (ansIdx !== null) {
+                    const selectedLetter = String.fromCharCode(65 + ansIdx); // A:0->A
+                    if (selectedLetter === q.answer) correctCount++;
+                }
+            });
+            const score = Math.round(correctCount * SCORE_PER * 10) / 10; // 保留一位小数
+            // 保存历史
+            scoreHistory.unshift(score);  // 最新在前
+            if (scoreHistory.length > 5) scoreHistory.pop();
+            updateScoreDisplay(score);
+            renderChart();
+
+            // 生成错题解析html
+            let wrongHtml = `<div style="background:#eef3fb; border-radius: 24px; padding: 20px;">`;
+            wrongHtml += `<h3 style="margin-bottom: 12px;">📊 得分: ${score} 分  (正确${correctCount}/${TOTAL})</h3>`;
+
+            for (let i = 0; i < TOTAL; i++) {
+                const q = questions[i];
+                const userAnsIdx = userAnswers[i];
+                const isCorrect = (userAnsIdx !== null && String.fromCharCode(65 + userAnsIdx) === q.answer);
+                let statusClass = isCorrect ? 'explain-correct' : 'explain-wrong';
+                let statusIcon = isCorrect ? '✅' : '❌';
+                if (userAnsIdx === null) {
+                    statusIcon = '⚠️ 未答';
+                } else {
+                    statusIcon = isCorrect ? '✅ 正确' : '❌ 错误';
+                }
+
+                wrongHtml += `<div class="explain-box ${statusClass}" style="margin: 12px 0 12px 0;">`;
+                wrongHtml += `<div style="font-weight:700;">${i+1}. ${q.q}</div>`;
+                wrongHtml += `<div>${statusIcon} 你的选项: ${userAnsIdx !== null ? q.options[userAnsIdx] : '(未选)'}  | 正确答案: ${q.answer}. ${q.options.find(opt => opt.startsWith(q.answer))}</div>`;
+                wrongHtml += `<div style="margin-top:8px;">📘 解析: ${q.explain}</div>`;
+                wrongHtml += `</div>`;
+            }
+            wrongHtml += `</div>`;
+            resultArea.innerHTML = wrongHtml;
+
+            // 根据分数显示奖杯
+            if (score >= 99.9) { // 满分
+                cupArea.innerHTML = '<div class="gold-cup">🏆✨ 金色奖杯 ✨🏆</div>';
+            } else {
+                cupArea.innerHTML = '';
+            }
+
+            // 更新鼓励语
+            updateEncouragement(score);
+        }
+
+        // 更新鼓励语 (基于历史变化)
+        function updateEncouragement(newScore) {
+            if (scoreHistory.length >= 2) {
+                let prev = scoreHistory[1];
+                let current = scoreHistory[0];
+                if (current > prev) {
+                    encourageEl.innerText = '📈 继续上升！保持状态，你太棒了！';
+                } else if (current < prev) {
+                    encourageEl.innerText = '📉 略有下降，别灰心，再看一遍错题吧！';
+                } else {
+                    encourageEl.innerText = '⚖️ 稳定发挥，再加把劲冲刺满分！';
+                }
+            } else {
+                if (newScore >= 90) encourageEl.innerText = '✨ 接近满分，稳扎稳打！';
+                else if (newScore >= 70) encourageEl.innerText = '📘 良好，再攻破几个难点就能优秀！';
+                else encourageEl.innerText = '🌱 多加练习，错题本就是提分宝典！';
+            }
+            if (newScore >= 99.9) encourageEl.innerText = '🏆 满分！金色奖杯属于你！ 🏆';
+            latestScoreSpan.innerText = newScore;
+        }
+
+        function updateScoreDisplay(score) {
+            latestScoreSpan.innerText = score;
+        }
+
+        // 画图表
+        let chart;
+        function renderChart() {
+            const ctx = document.getElementById('scoreChart').getContext('2d');
+            if (chart) chart.destroy();
+            const labels = scoreHistory.map((_, idx) => `#${scoreHistory.length - idx}`);
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '得分',
+                        data: scoreHistory.slice().reverse(), // 显示从旧到新
+                        borderColor: '#1f5596',
+                        backgroundColor: 'rgba(31,85,150,0.1)',
+                        tension: 0.2,
+                        fill: true,
+                        pointBackgroundColor: '#ffb347',
+                        pointRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { min: 0, max: 100, grid: { color: '#ccd9f0' } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // 提交处理
+        submitBtn.addEventListener('click', () => {
+            if (examEnded) return;
+            calculateAndShowResult(false);
+        });
+
+        // 初始化
+        function init() {
+            renderQuestions();
+            updateAnsweredCount();
+            startTimer();
+
+            // 从localstorage读取历史（可选）
+            // 简单起见，历史只保留本次 session
+        }
+        init();
+
+        // 暴露为全局调试 (可忽略)
+        window.userAnswers = userAnswers;
+    })();
+</script>
+</body>
+</html>
